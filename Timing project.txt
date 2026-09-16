@@ -1,0 +1,227 @@
+PROJECT: Jump Timing Assistant
+
+GAME / MAP:
+
+Game: Roblox
+Map/game: Keyboard Escape
+The tool is for the jump section/mechanic shown in the reference video.
+Reference video: https://youtu.be/ZY2GHGhE2-0
+Important reference section: 10:30–16:00
+GOAL:
+Create a Windows desktop overlay that helps my little brother perform the jump at the correct time.
+
+HOW IT SHOULD WORK:
+
+In the referenced section, the player uses a shrinking/size mechanic before a jump.
+When the shrinking/size event happens, the assistant should start its timing sequence.
+The assistant should calculate/show the best moment to press the jump key.
+It should clearly tell the player when to wait and when to jump.
+The main purpose is to reproduce the timing assistance shown in the video, NOT simply make a generic stopwatch.
+OVERLAY:
+
+Small, clean Windows overlay.
+Always-on-top.
+Can be moved anywhere on the screen.
+Can be resized.
+Should not cover much of the game.
+Very clear text indicating the current timing state.
+Example states:
+WAIT before 3500 ms
+JUMP from 3500 ms through 4700 ms
+TOO LATE after 4700 ms
+
+KEYBOARD DISPLAY:
+
+Show the relevant keyboard keys visually.
+Highlight the JUMP key when it is time to press it.
+Show the timing of the detected/input event if possible.
+Allow the jump key to be changed in settings.
+TIMING:
+
+Timing must be configurable.
+Include milliseconds precision.
+Include a calibration mode.
+Allow us to adjust the delay between the shrinking/size event and the recommended jump.
+Save the calibration settings so they remain after restarting the program.
+CONTROLS:
+
+Hotkey to enable/disable the overlay.
+Hotkey to start/reset the timing sequence.
+Hotkey to enter calibration mode.
+Configurable jump key.
+Configurable activation/reset keys.
+IMPORTANT TECHNICAL REQUIREMENT:
+Do NOT guess the timing.
+
+First study the reference video, especially 10:30–16:00, and determine:
+
+What exactly happens when the timing sequence begins.
+What event starts the timer.
+How long after that event the player should jump.
+Whether the timing changes depending on the player’s size/state.
+How the keyboard input is being used.
+Whether the tool in the video uses a fixed timing value or calculates it dynamically.
+Then implement the same useful timing logic.
+
+SAFETY / GAME INTEGRATION:
+
+Do NOT modify Roblox/game files.
+Do NOT inject DLLs.
+Do NOT modify memory.
+Do NOT bypass anti-cheat.
+Prefer a standalone visual overlay and keyboard-input display.
+If automatic detection of an in-game event requires unsafe game modification, stop and explain the limitation rather than implementing injection/memory manipulation.
+FILES:
+Create the entire project in:
+
+Desktop\Jump Timing Assistant\
+
+Include:
+
+Source code
+Configuration/settings
+README
+Calibration data
+Any required assets
+A standalone .exe if possible
+UI:
+Keep it simple and lightweight. The player should be able to glance at it while playing and immediately understand:
+
+CURRENT STATUS
+TIME UNTIL JUMP
+BEST JUMP TIME
+JUMP KEY
+
+REFERENCE:
+Use this video as the primary visual/behavioral reference:
+https://youtu.be/ZY2GHGhE2-0
+
+Focus specifically on 10:30–16:00.
+
+Do not start coding until you understand the timing mechanism demonstrated in that section.
+
+
+MANUAL ACTIVATION FALLBACK:
+
+The tool MUST have a reliable manual activation mode in case automatic detection of the shrinking/size event is unavailable or inaccurate.
+
+Manual mode should work like this:
+
+The player presses a configurable hotkey, for example F8.
+Pressing F8 immediately starts the jump-timing sequence.
+The timer begins at exactly the moment F8 is pressed.
+The overlay then shows the calculated optimal jump moment.
+Display a clear countdown, for example:
+WAIT…
+0.50s
+0.25s
+JUMP NOW!
+The player presses the configured jump key manually when the overlay says “JUMP NOW!”
+Pressing the activation hotkey again should reset/restart the timing sequence.
+The hotkey must work even when the game is the active window.
+Make the activation key configurable in settings.
+Include a separate calibration mode so the user can adjust the timing offset if their reaction time or game conditions require it.
+IMPORTANT:
+Automatic detection should be the primary mode, but MANUAL ACTIVATION MUST ALWAYS BE AVAILABLE as a fallback.
+
+Add a visible indicator showing which mode is active:
+
+AUTO — waiting for event
+AUTO — timing
+MANUAL — ready
+MANUAL — timing
+
+The manual mode should NOT perform the jump automatically. It should only provide the timing information and let the player press the keyboard key themselves.
+
+
+TIMING LOGIC — IMPORTANT:
+
+The timing system must reproduce the actual jump timing demonstrated in the reference video.
+
+REFERENCE:
+
+Video: https://youtu.be/ZY2GHGhE2-0
+Analyze 10:30–16:00 carefully.
+Do not assume the timing is a generic countdown.
+TIMING SEQUENCE:
+
+IDENTIFY THE START EVENT
+
+Determine exactly what visual/game event causes the timing sequence to begin.
+In particular, analyze the shrinking/size mechanic shown in the video.
+Record the exact moment that event occurs as T=0.
+MEASURE THE JUMP WINDOW
+Determine the time between the start event and the successful jump.
+Use the video to estimate the timing as accurately as possible.
+Store the result in milliseconds.
+Example format:
+Start event = 0 ms
+Recommended jump = XXXX ms
+The example XXXX is ONLY a placeholder. Do NOT use it unless the video confirms it.
+SHOW A LIVE COUNTDOWN
+After the sequence starts, display:
+START
+↓
+WAIT
+↓
+JUMP
+The “JUMP” state should be displayed from 3500 ms through 4700 ms.
+JUMP WINDOW
+Do not make the timing a single instant.
+Create a configurable “perfect jump window” around the calculated timing.
+Display:
+
+EARLY — before the window
+PERFECT — inside the window
+LATE — after the window
+PRECISION
+
+Use a high-resolution monotonic timer.
+Display milliseconds where useful.
+Avoid ordinary low-precision sleep/countdown logic for the actual timing calculation.
+The visual countdown can update frequently, but the underlying timing calculation must remain precise.
+CALIBRATION
+Add settings for:
+
+Base jump timing (ms)
+Perfect-window size (ms)
+Manual timing offset (ms)
+Reaction-time compensation (optional)
+Example:
+Base timing: [] ms
+Perfect window: [] ms
+Offset: [____] ms
+Save these settings locally.
+MANUAL MODE
+When automatic detection is unavailable:
+Press the configured activation hotkey.
+Treat that exact keypress as T=0.
+Start the same timing sequence.
+Use the calibrated jump timing.
+Tell the player exactly when to press the jump key.
+LEARNING / CALIBRATION MODE
+Include a mode that records:
+Start-event timestamp
+Player jump-key timestamp
+Difference between them
+Whether the attempt was early/perfect/late
+Allow multiple attempts to be recorded so the user can adjust the timing based on actual results.
+IMPORTANT:
+The program must NEVER automatically press the jump key.
+It only displays the recommended timing.
+The player performs the jump manually.
+VIDEO-BASED VALIDATION:
+Before finalizing the default timing value, compare the implementation against multiple successful jumps in the 10:30–16:00 section.
+
+
+If the timing cannot be reliably determined from the video alone, leave the timing as a configurable calibration value rather than inventing a number.
+
+The final overlay should make it immediately obvious:
+
+MODE: AUTO / MANUAL
+STATUS: WAIT / JUMP / TOO LATE
+TIMER: 0.000 s
+TARGET: XXXX ms
+WINDOW: ±XX ms
+JUMP KEY: [configured key]
+
